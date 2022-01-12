@@ -1,0 +1,42 @@
+<input type="text" id="fileName" value="{{fileName}}" hidden>
+<div class="container mt-5">
+    <div class="d-flex justify-content-center">
+        <div id="timeline"></div>
+    </div>
+
+    <div id="area" style="height:100%; width: 100%;"></div>
+    <div id="info">
+
+    </div>
+</div>
+
+
+{{#section "script"}}
+    <script src="https://cdn.jsdelivr.net/npm/d3@6"></script>
+    <script>
+        let jsonData = {}
+        const formData = new FormData()
+        formData.append("fileName", document.querySelector("#fileName").value)
+        const xhr = new XMLHttpRequest()
+        xhr.open("POST", "/file", true)
+        xhr.responseType = "json"
+        const loading = document.querySelector("#loadingPage")
+        xhr.onloadstart = () => {
+            document.body.style.pointerEvents = "none"
+            loading.classList.remove("d-none")
+        }
+        xhr.onload = () => {
+            jsonData = xhr.response
+            loading.classList.add("d-none")
+            document.body.style.pointerEvents = "auto"
+
+        }
+        xhr.onerror = e => {
+            console.log("error", xhr.response)
+            loading.classList.add("d-none")
+            document.body.style.pointerEvents = "auto"
+        }
+        xhr.send(formData)
+    </script>
+    <script src="/script.js"></script>
+{{/section}}

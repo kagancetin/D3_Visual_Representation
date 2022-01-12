@@ -1,0 +1,12 @@
+{
+  "name": "D3_Visual_Representation",
+  "version": "1.0.0",
+  "dependencies": {
+    "cookie-parser": "^1.4.6",
+    "express": "^4.17.2",
+    "express-handlebars": "^6.0.2",
+    "formidable": "^2.0.1",
+    "http-errors": "^2.0.0",
+    "morgan": "^1.10.0"
+  }
+}

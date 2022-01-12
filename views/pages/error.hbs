@@ -1,0 +1,48 @@
+<div class="p-4">
+    <table id="exportTable" class="display">
+        <thead>
+        <tr>
+            <th>Column 1</th>
+            <th>Column 2</th>
+        </tr>
+        </thead>
+        <tbody>
+        {{#each exportList}}
+            <tr>
+                <td>{{this}}</td>
+                <td>
+                    <div class="d-flex justify-content-end">
+                        <button data-file-name="{{this}}" type="button" class="btn btn-primary mx-2"
+                                data-bs-toggle="modal"
+                                data-bs-target="#jsonModal">Json
+                        </button>
+                        <button type="button" class="btn btn-secondary mx-2">Td</button>
+                        <button type="button" class="btn btn-success mx-2">Well</button>
+                    </div>
+                </td>
+            </tr>
+        {{/each}}
+        </tbody>
+    </table>
+</div>
+
+
+<!-- Modal -->
+<div class="modal fade" id="jsonModal" tabindex="-1" aria-labelledby="jsonModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="jsonModalLabel">Modal title</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="jsonForm" onsubmit="jsonSubmit(event)">
+
+            </form>
+        </div>
+    </div>
+</div>
+{{#section "script"}}
+    <script src="/export.js">
+
+    </script>
+{{/section}}
