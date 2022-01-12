@@ -10,8 +10,13 @@ router.get('/', function (req, res) {
 })
 
 router.get('/export/:fileName', async (req, res) => {
-  console.log(req.params)
-  res.render('pages/exports', {fileName: req.params.fileName})
+  try {
+    const file = await fs.readFile(path.join(__dirname, `../public/exports/${req.params.fileName}`), 'utf8')
+    res.render('pages/exports', {fileName: file})
+  } catch (err) {
+    console.log(err)
+    res.render('pages/exports', {fileName: "error"})
+  }
 })
 
 router.post('/file', async (req, res) => {

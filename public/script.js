@@ -1,101 +1,5 @@
-let exampleJSON = {
-  "actores": [
-    {
-      "clave": 2661,
-      "nombre": "Actor1"
-    },
-    {
-      "clave": 2701,
-      "nombre": "Actor2"
-    },
-    {
-      "clave": 2705,
-      "nombre": "Actor3"
-    }
-  ],
-  "tareas": [
-    {
-      "clave": 1,
-      "nombre": "Tarea1",
-      "efectividad": 1,
-      "repercusion": "positivo"
-    },
-    {
-      "clave": 2,
-      "nombre": "Tarea2",
-      "efectividad": 3,
-      "repercusion": "neutro"
-    },
-    {
-      "clave": 3,
-      "nombre": "Tarea4",
-      "efectividad": 4,
-      "repercusion": "positivo"
-    },
-    {
-      "clave": 4,
-      "nombre": "Tarea3",
-      "efectividad": 5,
-      "repercusion": "negativo"
-    }
-    ,
-    {
-      "clave": 5,
-      "nombre": "Tarea5",
-      "efectividad": 2,
-      "repercusion": "positivo"
-    }
-    ,
-    {
-      "clave": 6,
-      "nombre": "Tarea6",
-      "efectividad": 7,
-      "repercusion": "negativo"
-    }
-  ],
-  "actividades": [
-    {
-      "tarea-id": 1,
-      "actor-id": 2661,
-      "time-stamp": 1642298400000,
-      "hijos": [
-        3
-      ]
-    },
-    {
-      "tarea-id": 3,
-      "actor-id": 2661,
-      "time-stamp": 1642384800000,
-      "hijos": [
-        5, 6
-      ]
-    },
-    {
-      "tarea-id": 2,
-      "actor-id": 2661,
-      "time-stamp": 1642298400000,
-      "hijos": [
-        1, 4
-      ]
-    },
-    {
-      "tarea-id": 4,
-      "actor-id": 2705,
-      "time-stamp": 1642298400000
-    },
-    {
-      "tarea-id": 5,
-      "actor-id": 2701,
-      "time-stamp": 1642384800000
-    },
-    {
-      "tarea-id": 6,
-      "actor-id": 2705,
-      "time-stamp": 1642471200000
-    }
-  ]
-}
-
+const exampleJSON = JSON.parse(document.querySelector("#jsonfile").value)
+console.log(exampleJSON)
 let flare = {}
 let exampleArray = []
 let family = []
@@ -135,26 +39,20 @@ exampleArray.forEach(element => {
   }
 })
 
-console.log(actorIds)
-
-//const tree = d3.treemap();
-
 const root = d3.stratify()(family)
 const dx = 30
 const dy = 120
 const tree = d3.tree().nodeSize([dx, dy])
 const treeLink = d3.linkHorizontal().x(d => d.y).y(d => d.x)
 
-let width = 500
-
 function graph(root, {
   label = d => d.data.id,
   highlight = () => false,
-  marginLeft = 40
+  marginLeft = 40,
+  width = 500
 } = {}) {
 
   root = tree(root)
-  console.log(root.links())
   let x0 = Infinity
   let x1 = -x0
   root.each(d => {
@@ -178,7 +76,7 @@ function graph(root, {
     .data(root.links())
     .join("path")
     .attr("stroke", d => chooseColor(d.target.data.tareas.repercusion))
-    .attr("stroke-width", d => (d.target.data.tareas.efectividad / 4) + 1)
+    .attr("stroke-width", d => (d.target.data.tareas.efectividad / 3) + 2)
     .attr("class", "path")
     .attr("data-efectividad", d => d.source.data.tareas.nombre + " efectividad: " + d.source.data.tareas.efectividad + " - " + d.target.data.tareas.nombre + " efectividad: " + d.target.data.tareas.efectividad)
     .attr("d", treeLink)
@@ -213,7 +111,6 @@ function graph(root, {
 }
 
 function click(d) {
-  console.log(d.target.dataset.id)
   let html = "<ul>"
 
   exampleJSON["actividades"].forEach(element => {
@@ -244,7 +141,6 @@ function chooseColor(data) {
 
 function pathHover() {
   const allPaths = document.querySelectorAll(".path")
-  console.log(allPaths)
   allPaths.forEach(p => {
     var myDiv
     p.onmouseover = (evt) => {
@@ -255,16 +151,15 @@ function pathHover() {
       myDiv.classList.add("d-inline")
       myDiv.style.cssText = `
             position:absolute;
-            left: ${evt.clientX - myDiv.offsetWidth / 2}px; top: ${evt.clientY - 50}px;
+            left: ${evt.clientX - myDiv.offsetWidth / 2}px; top: ${evt.clientY - 100}px;
           `
       myDiv.innerText = `${p.dataset.efectividad}`
-      console.log(myDiv.width)
       document.body.appendChild(myDiv)
     }
     p.onmousemove = (evt) => {
       myDiv.style.cssText = `
             position:absolute;
-            left: ${evt.pageX - myDiv.offsetWidth / 2}px; top: ${evt.pageY - 50}px;
+            left: ${evt.pageX - myDiv.offsetWidth / 2}px; top: ${evt.pageY - 100}px;
           `
     }
     p.onmouseleave = (evt) => {
@@ -273,12 +168,8 @@ function pathHover() {
   })
 }
 
-const dst = d3
-  .scaleTime()
-  .domain([new Date("2019-03-31 00:00:00"), new Date("2019-03-31 10:00:00")])
-
-function visualizeTicks(scale, tickArguments) {
-  const height = 60, m = width > 599 ? 90 : 10
+function visualizeTicks(scale, tickArguments, width) {
+  const height = "100%", m = width > 599 ? 90 : 10
 
   if (tickArguments === undefined) tickArguments = []
 
@@ -288,30 +179,57 @@ function visualizeTicks(scale, tickArguments) {
     .attr("width", width)
     .attr("height", height)
 
-  console.log(tickArguments)
   svg.append("g").call(d3.axisBottom(scale).ticks(...tickArguments))
-
-  console.log(svg)
-
   return svg.node()
 }
 
 window.onload = () => {
-  
   let area = document.querySelector("#area")
   let timeline = document.querySelector("#timeline")
 
-  const svg = visualizeTicks(dst, [10, d3.timeFormat("%I %p")])
+  times = times.sort()
+  times = times.filter((e, i, a) => e !== a[i - 1])
+  console.log(new Date(times[0]))
+  console.log(new Date(times[times.length - 1]))
 
-  d3.select(svg)
-    .append("text")
-    .attr("fill", "black")
-    .attr("x", dst(new Date("2019-03-31 01:57:00")) + "px")
-    .attr("y", "40px")
-    .text("la")
-    .attr("text-anchor", "middle")
-    .clone(true).lower()
-    .attr("stroke", "white")
+  let m = area.clientWidth > 599 ? 90 : 10
+  const dst = d3
+    .scaleTime()
+    .domain([new Date(times[0]), new Date(times[times.length - 1])])
+    .range([m, area.clientWidth - m])
+    .nice()
+
+  console.log(window)
+  const svg = visualizeTicks(dst, [10, d3.timeFormat("%I %p %b %d")], area.clientWidth)
+
+  let i = []
+  exampleArray.forEach(element => {
+    if (i[element["time-stamp"]]) i[element["time-stamp"]]++
+    else i[element["time-stamp"]] = 1
+    d3.select(svg)
+      .append("line")
+      .attr("x1", dst(new Date(element["time-stamp"])) + "px")
+      .attr("x2", dst(new Date(element["time-stamp"])) + "px")
+      .attr("y1", 0)
+      .attr("y2", 40 * i[element["time-stamp"]])
+      .attr("stroke", "black")
+    d3.select(svg)
+      .append("text")
+      .attr("fill", "black")
+      .attr("font-size", "0.8em")
+      .attr("x", dst(new Date(element["time-stamp"])) + "px")
+      .attr("y", 40 * i[element["time-stamp"]] + 10 + "px")
+      .text(moment(element["time-stamp"]).format("hh:mm"))
+      .clone(true).lower()
+    d3.select(svg)
+      .append("text")
+      .attr("fill", "black")
+      .attr("font-size", "0.9em")
+      .attr("x", dst(new Date(element["time-stamp"])) + "px")
+      .attr("y", 40 * i[element["time-stamp"]] + 25 + "px")
+      .text(element["tareas"]["nombre"])
+      .clone(true).lower()
+  })
 
   area.appendChild(graph(root))
   timeline.appendChild(svg)
