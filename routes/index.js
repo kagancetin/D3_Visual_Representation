@@ -12,6 +12,7 @@ router.get('/', function (req, res) {
 router.get('/export/:fileName', async (req, res) => {
   try {
     const file = await fs.readFile(path.join(__dirname, `../public/exports/${req.params.fileName}`), 'utf8')
+    console.log(file)
     res.render('pages/exports', {fileName: file})
   } catch (err) {
     console.log(err)

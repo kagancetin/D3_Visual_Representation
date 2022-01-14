@@ -1,5 +1,4 @@
 const exampleJSON = JSON.parse(document.querySelector("#jsonfile").value)
-console.log(exampleJSON)
 let flare = {}
 let exampleArray = []
 let family = []
@@ -22,7 +21,6 @@ exampleJSON["actividades"].forEach(element => {
   exampleArray[element["tarea-id"]] = element
 })
 
-console.log(exampleArray)
 exampleArray.forEach(element => {
   times.push(element["time-stamp"])
   if (actorIds[element["actor-id"]]) actorIds[element["actor-id"]]++
@@ -92,8 +90,9 @@ function graph(root, {
     .on("click", click)
 
   node.append("circle")
-    .attr("fill", d => highlight(d) ? "red" : d.children ? "#555" : "#999")
+    .attr("fill", "#999")
     .attr("data-id", label)
+    .attr("data-id-circle", "")
     .style("cursor", "pointer")
     .attr("r", d => actorIds[d.data.actor_id] + 2)
 
@@ -111,11 +110,16 @@ function graph(root, {
 }
 
 function click(d) {
-  let html = "<ul>"
-
+  let html = ""
+  document.querySelectorAll("[data-id-circle]").forEach(p => {
+    if (p.dataset.id == d.target.dataset.id) p.setAttribute("fill", "#555")
+    else p.setAttribute("fill", "#999")
+  })
   exampleJSON["actividades"].forEach(element => {
     if (element["tareas"]["nombre"] === d.target.dataset.id) {
       html += `
+          <h5>${element["tareas"]["nombre"]}</h5>
+          <ul>
             <li>Actores clave : ${element["actores"]["clave"]}</li>
             <li>Actores nombre : ${element["actores"]["nombre"]}</li>
             <li>tareas clave : ${element["tareas"]["clave"]}</li>
@@ -123,10 +127,10 @@ function click(d) {
             <li>tareas efectividad : ${element["tareas"]["efectividad"]}</li>
             <li>tareas repercusion : ${element["tareas"]["repercusion"]}</li>
             <li>time-stamp : ${new Date(element["time-stamp"])}</li>
+          </ul>
             `
     }
   })
-  html += "</ul>"
 
   let infoArea = document.querySelector("#info")
   infoArea.innerHTML = html
@@ -144,7 +148,6 @@ function pathHover() {
   allPaths.forEach(p => {
     var myDiv
     p.onmouseover = (evt) => {
-      console.log(evt)
       myDiv = document.createElement('div')
       myDiv.classList.add("bg-white")
       myDiv.classList.add("p-2")
@@ -189,8 +192,6 @@ window.onload = () => {
 
   times = times.sort()
   times = times.filter((e, i, a) => e !== a[i - 1])
-  console.log(new Date(times[0]))
-  console.log(new Date(times[times.length - 1]))
 
   let m = area.clientWidth > 599 ? 90 : 10
   const dst = d3
@@ -199,36 +200,44 @@ window.onload = () => {
     .range([m, area.clientWidth - m])
     .nice()
 
-  console.log(window)
   const svg = visualizeTicks(dst, [10, d3.timeFormat("%I %p %b %d")], area.clientWidth)
-
+  d3.select(svg).style("overflow", "visible").attr("class", "mt-5")
   let i = []
+
+  usedTime = {}
   exampleArray.forEach(element => {
     if (i[element["time-stamp"]]) i[element["time-stamp"]]++
     else i[element["time-stamp"]] = 1
     d3.select(svg)
       .append("line")
+      .attr("opacity", "0.8")
       .attr("x1", dst(new Date(element["time-stamp"])) + "px")
       .attr("x2", dst(new Date(element["time-stamp"])) + "px")
-      .attr("y1", 0)
-      .attr("y2", 40 * i[element["time-stamp"]])
+      .attr("y1", 40 * (i[element["time-stamp"]] - 1) + (i[element["time-stamp"]] - 1 == 0 ? 0 : 4))
+      .attr("y2", 40 * i[element["time-stamp"]] - 12)
       .attr("stroke", "black")
     d3.select(svg)
       .append("text")
       .attr("fill", "black")
-      .attr("font-size", "0.8em")
+      .attr("font-size", "12px")
+      .attr("text-anchor", "middle")
       .attr("x", dst(new Date(element["time-stamp"])) + "px")
-      .attr("y", 40 * i[element["time-stamp"]] + 10 + "px")
-      .text(moment(element["time-stamp"]).format("hh:mm"))
-      .clone(true).lower()
-    d3.select(svg)
-      .append("text")
-      .attr("fill", "black")
-      .attr("font-size", "0.9em")
-      .attr("x", dst(new Date(element["time-stamp"])) + "px")
-      .attr("y", 40 * i[element["time-stamp"]] + 25 + "px")
+      .attr("y", 40 * i[element["time-stamp"]] + "px")
       .text(element["tareas"]["nombre"])
+      .attr("data-id", element["tareas"]["nombre"])
+      .style("cursor", "pointer")
+      .on("click", click)
       .clone(true).lower()
+    if (!usedTime[element["time-stamp"]]) {
+      usedTime[element["time-stamp"]] = true
+      d3.select(svg)
+        .append("text")
+        .attr("fill", "black")
+        .attr("font-size", "0.7em")
+        .text(moment(element["time-stamp"]).format("LT"))
+        .attr("transform", `translate(${dst(new Date(element["time-stamp"])) + 3}, -5) rotate(-90)`)
+        .clone(true).lower()
+    }
   })
 
   area.appendChild(graph(root))

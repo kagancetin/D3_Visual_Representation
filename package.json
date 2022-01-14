@@ -1,6 +1,9 @@
 {
   "name": "D3_Visual_Representation",
   "version": "1.0.0",
+  "scripts": {
+    "start": "nodemon app.js"
+  },
   "dependencies": {
     "cookie-parser": "^1.4.6",
     "express": "^4.17.2",

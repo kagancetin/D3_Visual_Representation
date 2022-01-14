@@ -1,0 +1,97 @@
+{
+    "actores": [
+        {
+            "clave": 2661,
+            "nombre": "Actor1"
+        },
+        {
+            "clave": 2701,
+            "nombre": "Actor2"
+        },
+        {
+            "clave": 2705,
+            "nombre": "Actor3"
+        }
+    ],
+    "tareas": [
+        {
+            "clave": 1,
+            "nombre": "Tarea1",
+            "efectividad": 1,
+            "repercusion": "positivo"
+        },
+        {
+            "clave": 2,
+            "nombre": "Tarea2",
+            "efectividad": 3,
+            "repercusion": "neutro"
+        },
+        {
+            "clave": 3,
+            "nombre": "Tarea4",
+            "efectividad": 4,
+            "repercusion": "positivo"
+        },
+        {
+            "clave": 4,
+            "nombre": "Tarea3",
+            "efectividad": 5,
+            "repercusion": "negativo"
+        },
+        {
+            "clave": 5,
+            "nombre": "Tarea5",
+            "efectividad": 2,
+            "repercusion": "positivo"
+        },
+        {
+            "clave": 6,
+            "nombre": "Tarea6",
+            "efectividad": 7,
+            "repercusion": "negativo"
+        }
+    ],
+    "actividades": [
+        {
+            "tarea-id": 1,
+            "actor-id": 2661,
+            "time-stamp": 1642298400000,
+            "hijos": [
+                3
+            ]
+        },
+        {
+            "tarea-id": 3,
+            "actor-id": 2661,
+            "time-stamp": 1642384800000,
+            "hijos": [
+                5,
+                6
+            ]
+        },
+        {
+            "tarea-id": 2,
+            "actor-id": 2661,
+            "time-stamp": 1642298400000,
+            "hijos": [
+                1,
+                4
+            ]
+        },
+        {
+            "tarea-id": 4,
+            "actor-id": 2705,
+            "time-stamp": 1642298400000
+        },
+        {
+            "tarea-id": 5,
+            "actor-id": 2701,
+            "time-stamp": 1642384800000
+        },
+        {
+            "tarea-id": 6,
+            "actor-id": 2705,
+            "time-stamp": 1642471200000
+        }
+    ]
+}
