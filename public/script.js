@@ -46,7 +46,7 @@ const treeLink = d3.linkHorizontal().x(d => d.y).y(d => d.x)
 
 function graph(root, {
   label = d => d.data.id,
-  labelHtml = d => `${d.data.id} <tspan font-size="6px" >(${d.data.actor.nombre})</tspan>`,
+  labelHtml = d => `${d.data.id} <tspan font-size="6px" data-id="${d.data.id}" >(${d.data.actor.nombre})</tspan>`,
   highlight = () => false,
   marginLeft = 40,
   width = 500
