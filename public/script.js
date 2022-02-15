@@ -30,10 +30,11 @@ exampleArray.forEach(element => {
       id: element["tareas"]["nombre"],
       parentId: exampleArray[element["parent"]]["tareas"]["nombre"],
       actor_id: element["actor-id"],
+      actor: element["actores"],
       tareas: element["tareas"]
     })
   } else {
-    family.push({id: element["tareas"]["nombre"], actor_id: element["actor-id"], tareas: element["tareas"]})
+    family.push({id: element["tareas"]["nombre"], actor_id: element["actor-id"], actor: element["actores"], tareas: element["tareas"]})
   }
 })
 
@@ -45,11 +46,11 @@ const treeLink = d3.linkHorizontal().x(d => d.y).y(d => d.x)
 
 function graph(root, {
   label = d => d.data.id,
+  labelHtml = d => `${d.data.id} <tspan font-size="6px" >(${d.data.actor.nombre})</tspan>`,
   highlight = () => false,
   marginLeft = 40,
   width = 500
 } = {}) {
-
   root = tree(root)
   let x0 = Infinity
   let x1 = -x0
@@ -101,7 +102,7 @@ function graph(root, {
     .attr("y", "-10px")
     .attr("x", "0px")
     .attr("data-id", label)
-    .text(label)
+    .html(labelHtml)
     .style("cursor", "pointer")
     .clone(true).lower()
     .attr("stroke", "white")
@@ -120,13 +121,13 @@ function click(d) {
       html += `
           <h5>${element["tareas"]["nombre"]}</h5>
           <ul>
-            <li>Actores clave : ${element["actores"]["clave"]}</li>
-            <li>Actores nombre : ${element["actores"]["nombre"]}</li>
-            <li>tareas clave : ${element["tareas"]["clave"]}</li>
-            <li>tareas nombre : ${element["tareas"]["nombre"]}</li>
-            <li>tareas efectividad : ${element["tareas"]["efectividad"]}</li>
-            <li>tareas repercusion : ${element["tareas"]["repercusion"]}</li>
-            <li>time-stamp : ${new Date(element["time-stamp"])}</li>
+            <li>Actores clave : <strong>${element["actores"]["clave"]}</strong></li>
+            <li>Actores nombre : <strong>${element["actores"]["nombre"]}</strong></li>
+            <li>tareas clave : <strong>${element["tareas"]["clave"]}</strong></li>
+            <li>tareas nombre : <strong>${element["tareas"]["nombre"]}</strong></li>
+            <li>tareas efectividad : <strong>${element["tareas"]["efectividad"]}</strong></li>
+            <li>tareas repercusion : <strong>${element["tareas"]["repercusion"]}</strong></li>
+            <li>time-stamp : <strong>${new Date(element["time-stamp"])}</strong></li>
           </ul>
             `
     }
